@@ -3,6 +3,7 @@ package com.fynd.backend.service;
 import com.fynd.backend.entities.User;
 import com.fynd.backend.enums.UserStatus;
 import com.fynd.backend.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -12,9 +13,11 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User create (User user){
@@ -22,6 +25,7 @@ public class UserService {
         {
             throw new RuntimeException("Email ou téléphone déjà utilisé");
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
       return userRepository.save(user);
     }
 
