@@ -4,7 +4,6 @@ import com.fynd.backend.dto.*;
 import com.fynd.backend.entities.User;
 import com.fynd.backend.repository.UserRepository;
 import com.fynd.backend.security.JwtService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
