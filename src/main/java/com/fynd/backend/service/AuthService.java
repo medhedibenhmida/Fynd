@@ -15,6 +15,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordResetTokenRepository tokenRepository;
+    private final EmailService emailService;
 
     public void createPasswordResetToken(String email) {
         User user = userRepository.findByEmail(email)
@@ -32,6 +33,6 @@ public class AuthService {
 
         String resetLink = "http://localhost:4200/reset-password?token=" + token;
 
-        System.out.println("RESET PASSWORD LINK => " + resetLink);
+        emailService.sendResetPasswordEmail(user, resetLink);
     }
 }
