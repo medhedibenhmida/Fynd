@@ -60,6 +60,9 @@ public class User {
         if (userStatus == null) {
             userStatus = UserStatus.NOT_VERIFIED;
         }
+        if (role == null) {
+            role = Role.USER;
+        }
         if (created_at == null) {
             created_at = LocalDateTime.now();
         }
