@@ -61,4 +61,10 @@ public class UserService {
         user.setUserStatus(UserStatus.DELETED);
         return userRepository.save(user);
     }
+
+    public User findByEmail(String email) {
+
+        return userRepository.findByEmail(email).
+                orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec email: " + email));
+    }
 }

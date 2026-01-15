@@ -1,8 +1,11 @@
 package com.fynd.backend.controller;
 
+import com.fynd.backend.dto.AuthUser;
+import com.fynd.backend.dto.UserResponse;
 import com.fynd.backend.entities.User;
 import com.fynd.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -52,4 +55,24 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/me")
+    public UserResponse getCurrentUser(Authentication authentication) {
+        AuthUser authUser = (AuthUser) authentication.getPrincipal();
+
+        User user = userService.getByUuid(authUser.getUuid())
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        return UserResponse.builder()
+                .uuid(user.getUuid())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .age(user.getAge())
+                .role(user.getRole())
+                .userStatus((user.getUserStatus()))
+                .build();
+    }
+
 }

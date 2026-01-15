@@ -1,5 +1,6 @@
 package com.fynd.backend.config;
 
+import com.fynd.backend.security.JwtTokenFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,6 +9,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -18,24 +20,22 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // Bean pour encoder les mots de passe avec BCrypt
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Configuration de la sécurité HTTP
+    // SecurityFilterChain unique avec JWT Filter
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtTokenFilter jwtTokenFilter) throws Exception {
         http
-                .cors(cors -> {}) // Active CORS en utilisant le bean corsConfigurationSource
-                .csrf(AbstractHttpConfigurer::disable) // Désactive CSRF (utile pour Angular)
+                .cors(cors -> {}) // Active CORS via le bean corsConfigurationSource
+                .csrf(AbstractHttpConfigurer::disable) // Désactive CSRF
                 .authorizeHttpRequests(auth -> auth
-                        // Autorise register et login sans authentification
-                        .requestMatchers("/users/register", "/users/login","/users/forgot-password","/users/reset-password").permitAll()
-                        // Toutes les autres routes nécessitent une authentification
+                        .requestMatchers("/users/register", "/users/login", "/users/forgot-password", "/users/reset-password").permitAll()
                         .anyRequest().authenticated()
-                );
+                )
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -44,23 +44,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
-        // Frontend autorisé
         configuration.setAllowedOrigins(List.of("http://localhost:4200"));
-
-        // Méthodes HTTP autorisées
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-        // Tous les headers sont autorisés (ex: Content-Type, Authorization)
         configuration.setAllowedHeaders(List.of("*"));
-
-        // Permet l’envoi de cookies (si nécessaire)
         configuration.setAllowCredentials(true);
 
-        // Appliquer la config à toutes les routes
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-
         return source;
     }
 }
