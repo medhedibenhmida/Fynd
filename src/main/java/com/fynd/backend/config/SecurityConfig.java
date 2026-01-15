@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // Désactive CSRF (utile pour Angular)
                 .authorizeHttpRequests(auth -> auth
                         // Autorise register et login sans authentification
-                        .requestMatchers("/users/register", "/users/login","/users/forgot-password").permitAll()
+                        .requestMatchers("/users/register", "/users/login","/users/forgot-password","/users/reset-password").permitAll()
                         // Toutes les autres routes nécessitent une authentification
                         .anyRequest().authenticated()
                 );

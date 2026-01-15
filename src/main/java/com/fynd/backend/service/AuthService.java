@@ -5,6 +5,7 @@ import com.fynd.backend.entities.User;
 import com.fynd.backend.repository.PasswordResetTokenRepository;
 import com.fynd.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -35,4 +36,25 @@ public class AuthService {
 
         emailService.sendResetPasswordEmail(user, resetLink);
     }
-}
+
+    public void resetPassword(String token, String newPassword) {
+        PasswordResetToken resetToken = tokenRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Token invalide"));
+
+        if (resetToken.isUsed()) {
+            throw new RuntimeException("Token déjà utilisé");
+        }
+        if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+             throw new RuntimeException("Token expiré");
+            }
+        User user = resetToken.getUser();
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        user.setPassword(encoder.encode(newPassword));
+        userRepository.save(user);
+
+        resetToken.setUsed(true);
+        tokenRepository.save(resetToken);
+
+        }
+    }

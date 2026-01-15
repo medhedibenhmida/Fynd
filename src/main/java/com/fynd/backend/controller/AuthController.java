@@ -46,14 +46,23 @@ public class AuthController {
     @PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(@RequestBody Map<String, String> request) {
         String email = request.get("email");
-
-        // On enveloppe dans try/catch pour ne pas exposer si email existe ou non
         try {
             authService.createPasswordResetToken(email);
-        } catch (RuntimeException e) {
-            // Ne rien faire, on ne veut pas divulguer si l'email est valide
+        } catch (RuntimeException ignored) {
         }
-
         return ResponseEntity.ok("Si un compte existe avec cet email, un email vous sera envoyé");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request) {
+        String token = request.get("token");
+        String newPassword = request.get("newPassword");
+
+        try {
+            authService.resetPassword(token, newPassword);
+            return ResponseEntity.ok("Mot de passe réinitialisé avec succès");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
