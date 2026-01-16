@@ -7,6 +7,10 @@ import com.fynd.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -72,7 +76,30 @@ public class UserController {
                 .age(user.getAge())
                 .role(user.getRole())
                 .userStatus((user.getUserStatus()))
+                .profilePicture(user.getProfilePicture())
                 .build();
     }
+    @PostMapping("/me/avatar")
+    public ResponseEntity<Map<String, String>> uploadProfilePicture(
+            @RequestParam("file") MultipartFile file,
+            Authentication auth) {
 
+        try {
+            AuthUser authUser = (AuthUser) auth.getPrincipal();
+            User user = userService.findByEmail(authUser.getEmail());
+
+            String url = userService.saveProfilePicture(user, file);
+
+            // Retour JSON
+            Map<String, String> response = new HashMap<>();
+            response.put("url", url);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "Erreur lors de l'upload de l'avatar: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
 }

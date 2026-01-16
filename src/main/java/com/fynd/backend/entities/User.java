@@ -42,6 +42,7 @@ public class User {
 
     private String selfieUrl;
     private String documentUrl;
+    private String profilePicture;
 
     private LocalDateTime created_at;
     private LocalDateTime updated_at;

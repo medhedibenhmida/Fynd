@@ -16,4 +16,5 @@ public class UserResponse {
     private long age;
     private Role role;
     private UserStatus userStatus;
+    private String profilePicture;
 }

@@ -32,7 +32,9 @@ public class SecurityConfig {
                 .cors(cors -> {}) // Active CORS via le bean corsConfigurationSource
                 .csrf(AbstractHttpConfigurer::disable) // Désactive CSRF
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/register", "/users/login", "/users/forgot-password", "/users/reset-password").permitAll()
+                        .requestMatchers("/users/register", "/users/login", "/users/forgot-password",
+                                "/users/reset-password",
+                                "/uploads/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
