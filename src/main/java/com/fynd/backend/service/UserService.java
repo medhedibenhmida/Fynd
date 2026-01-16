@@ -5,8 +5,14 @@ import com.fynd.backend.enums.UserStatus;
 import com.fynd.backend.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -66,5 +72,27 @@ public class UserService {
 
         return userRepository.findByEmail(email).
                 orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec email: " + email));
+    }
+
+    public String saveProfilePicture(User user, MultipartFile file) throws IOException {
+
+        String uploadDir = System.getProperty("user.dir") + "/uploads/avatars/";
+        Path uploadPath = Paths.get(uploadDir);
+
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        String fileName = user.getUuid() + "_" + Objects.requireNonNull(file.getOriginalFilename()).replaceAll("\\s+", "_");
+        Path filePath = uploadPath.resolve(fileName);
+
+        file.transferTo(filePath.toFile());
+
+        String url = "/uploads/avatars/" + fileName; // accessible par Angular
+        user.setProfilePicture(url);
+        userRepository.save(user);
+
+        return url;
+
     }
 }
