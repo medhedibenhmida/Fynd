@@ -1,6 +1,6 @@
 package com.fynd.backend.enums;
 
-public enum ActivityStatus {
+public enum ActivityApprovalStatus {
     ACCEPTED,
     REJECTED,
     PENDING

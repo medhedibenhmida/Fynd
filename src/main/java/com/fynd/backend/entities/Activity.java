@@ -1,6 +1,7 @@
 package com.fynd.backend.entities;
 
-import com.fynd.backend.enums.ActivityStatus;
+import com.fynd.backend.enums.ActivityApprovalStatus;
+import com.fynd.backend.enums.ActivityLifecycleState;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class Activity {
     private String description;
     private LocalDateTime created_at;
     private LocalDateTime  updated_at;
+    private LocalDateTime  plannedDate;
     private String title;
     private String location;
     private String type;
@@ -36,5 +38,8 @@ public class Activity {
     private String genderPreference;
 
     @Enumerated(EnumType.STRING)
-    private ActivityStatus activityStatus;
+    private ActivityApprovalStatus activityApprovalStatus ;
+
+    @Enumerated(EnumType.STRING)
+    private ActivityLifecycleState activityLifecycleState;
 }
