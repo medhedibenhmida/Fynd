@@ -7,10 +7,14 @@ import com.fynd.backend.entities.Activity;
 import com.fynd.backend.entities.User;
 import com.fynd.backend.enums.ActivityApprovalStatus;
 import com.fynd.backend.enums.ActivityLifecycleState;
+import com.fynd.backend.exception.InsufficientGapException;
 import com.fynd.backend.repository.ActivityRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ActivityService {
@@ -28,6 +32,18 @@ public class ActivityService {
 
         User activityCreator = userService.getByUuid(userUuid).orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
 
+        List<Activity> userActivities = activityRepository.findByCreatorUuidAndActivityLifecycleStateIn(
+                userUuid, List.of(ActivityLifecycleState.UPCOMING, ActivityLifecycleState.ONGOING));
+
+        for (Activity existing : userActivities) {
+            long hoursDiff = Duration.between(existing.getPlannedDate(), request.getPlannedDate()).toHours();
+
+            if (Math.abs(hoursDiff) < 5) {
+                throw new InsufficientGapException(
+                        "Cette activité ne peut pas être créée: un délai d’au moins 5heures est nécessaire entre deux activités");
+            }
+        }
+
         Activity activity = new Activity();
 
         activity.setTitle(request.getTitle());
@@ -41,6 +57,9 @@ public class ActivityService {
         activity.setActivityApprovalStatus(ActivityApprovalStatus.PENDING);
         activity.setActivityLifecycleState(ActivityLifecycleState.UPCOMING);
         activity.setCreator(activityCreator);
+        activity.setLocation(request.getLocation());
+        activity.setType(request.getType());
+        activity.setNotes(request.getNotes());
 
         Activity saved = activityRepository.save(activity);
 

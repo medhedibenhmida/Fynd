@@ -26,6 +26,7 @@ public class Activity {
     private String title;
     private String location;
     private String type;
+    private String notes;
 
     @ManyToOne
     private User creator;

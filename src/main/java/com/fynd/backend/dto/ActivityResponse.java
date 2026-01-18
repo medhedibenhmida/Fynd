@@ -18,4 +18,5 @@ public class ActivityResponse {
     private String genderPreference;
     private LocalDateTime plannedDate;
     private UserResponse creator;
+
 }

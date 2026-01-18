@@ -18,6 +18,7 @@ public class ActivityRequest {
 
     private String location;
     private String type;
+    private String notes;
 
     private boolean isPrivate;
 
