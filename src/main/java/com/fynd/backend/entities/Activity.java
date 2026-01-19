@@ -1,6 +1,7 @@
 package com.fynd.backend.entities;
 
-import com.fynd.backend.enums.ActivityStatus;
+import com.fynd.backend.enums.ActivityApprovalStatus;
+import com.fynd.backend.enums.ActivityLifecycleState;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,12 +19,13 @@ public class Activity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String description;
     private LocalDateTime created_at;
     private LocalDateTime  updated_at;
+    private LocalDateTime  plannedDate;
     private String title;
     private String location;
     private String type;
+    private String notes;
 
     @ManyToOne
     private User creator;
@@ -33,8 +35,10 @@ public class Activity {
 
     private boolean isPrivate;
     private int maxParticipants;
-    private String genderPreference;
 
     @Enumerated(EnumType.STRING)
-    private ActivityStatus activityStatus;
+    private ActivityApprovalStatus activityApprovalStatus ;
+
+    @Enumerated(EnumType.STRING)
+    private ActivityLifecycleState activityLifecycleState;
 }
