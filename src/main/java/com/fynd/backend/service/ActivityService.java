@@ -47,12 +47,10 @@ public class ActivityService {
         Activity activity = new Activity();
 
         activity.setTitle(request.getTitle());
-        activity.setDescription(request.getDescription());
         activity.setCreated_at(LocalDateTime.now());
         activity.setPlannedDate(request.getPlannedDate());
         activity.setTitle(request.getTitle());
         activity.setPrivate(request.isPrivate());
-        activity.setGenderPreference(request.getGenderPreference());
         activity.setMaxParticipants(request.getMaxParticipants());
         activity.setActivityApprovalStatus(ActivityApprovalStatus.PENDING);
         activity.setActivityLifecycleState(ActivityLifecycleState.UPCOMING);
@@ -68,14 +66,14 @@ public class ActivityService {
         return  new ActivityResponse(
                 saved.getId(),
                 saved.getTitle(),
-                saved.getDescription(),
                 saved.getLocation(),
                 saved.getType(),
                 saved.isPrivate(),
                 saved.getMaxParticipants(),
-                saved.getGenderPreference(),
                 saved.getPlannedDate(),
-                userResponse
+                userResponse,
+                saved.getActivityLifecycleState(),
+                saved.getActivityApprovalStatus()
         );
     }
 }

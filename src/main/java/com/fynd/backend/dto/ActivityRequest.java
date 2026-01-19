@@ -13,9 +13,6 @@ public class ActivityRequest {
     @NotBlank(message = "Le titre est obligatoire")
     private String title;
 
-    @NotBlank(message = "La description est obligatoire")
-    private String description;
-
     private String location;
     private String type;
     private String notes;
@@ -26,7 +23,6 @@ public class ActivityRequest {
     @Max(value = 100, message = "Maximum 100 participants")
     private int maxParticipants;
 
-    private String genderPreference;
 
     @Future(message = "La date prévue doit être dans le futur")
     private LocalDateTime plannedDate;

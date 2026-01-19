@@ -19,7 +19,6 @@ public class Activity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String description;
     private LocalDateTime created_at;
     private LocalDateTime  updated_at;
     private LocalDateTime  plannedDate;
@@ -36,7 +35,6 @@ public class Activity {
 
     private boolean isPrivate;
     private int maxParticipants;
-    private String genderPreference;
 
     @Enumerated(EnumType.STRING)
     private ActivityApprovalStatus activityApprovalStatus ;
